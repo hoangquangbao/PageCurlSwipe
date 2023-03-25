@@ -9,14 +9,14 @@ import SwiftUI
 
 struct CardView: View {
     
-    var imageModel: ImageModel
+    var image: ImageModel
     
     var body: some View {
         GeometryReader {
             let size = $0.size
             
             ZStack {
-                Image(imageModel.assetName)
+                Image(image.assetName)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)
@@ -29,6 +29,6 @@ struct CardView: View {
 
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(imageModel: ImageModel(assetName: "img_1"))
+        CardView(image: ImageModel(assetName: "img_1"))
     }
 }
