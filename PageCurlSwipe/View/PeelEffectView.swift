@@ -30,7 +30,7 @@ struct PeelEffectView<Content: View>: View {
                 GeometryReader {
                     let rect = $0.frame(in: .global)
                     
-
+                    
                     Rectangle()
                     /*
                      - Swipe: Right to Left
@@ -44,6 +44,8 @@ struct PeelEffectView<Content: View>: View {
                 GeometryReader {
                     let rect = $0.frame(in: .global)
                     let size = $0.size
+                    let minOpacity = dragProgress / 0.05
+                    let opacity = min(1, minOpacity)
                     
                     content
                     /* Making it look like it's rolling */
@@ -56,6 +58,25 @@ struct PeelEffectView<Content: View>: View {
                                 .fill(.white.opacity(0.25))
                                 .mask(content)
                         })
+                    /* Making it glow at the back side */
+                        .overlay(alignment: .trailing) {
+                            Rectangle()
+                                .fill(
+                                    .linearGradient(
+                                        colors: [.clear,
+                                                 .white,
+                                                 .clear,
+                                                 .clear],
+                                        startPoint: .leading,
+                                        endPoint: .trailing)
+                                )
+                                .frame(width: 60)
+                                .offset(x: 40)
+                            /* The glow gradient can still be seen at the idle, but it can be removed with the help of progress from the drag gesture */
+                                .offset(x: -30 + (30 * opacity))
+                            /* Moving along side while dragging */
+                                .offset(x: size.width * -dragProgress)
+                        }
                     /*
                      - Flipping horizontally for upsize image
                      - Since the masking starts from right to left, we flip the overlay horizontally to match the masking effect
@@ -91,7 +112,12 @@ struct PeelEffectView<Content: View>: View {
                                     withAnimation(.spring(response: 0.6,
                                                           dampingFraction: 0.7,
                                                           blendDuration: 0.7)) {
-                                        dragProgress = .zero
+                                        if dragProgress > 0.25 {
+                                            /* Keep the drag gesture */
+                                            dragProgress = 0.6
+                                        } else {
+                                            dragProgress = .zero
+                                        }
                                     }
                                 })
                         )
