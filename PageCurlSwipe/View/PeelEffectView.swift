@@ -87,6 +87,17 @@ struct PeelEffectView<Content: View>: View {
                         )
                 }
             }
+            .background {
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    .fill(.red.gradient)
+                    .overlay(alignment: .trailing) {
+                        Image(systemName: "trash")
+                            .font(.title)
+                            .padding(.trailing, 20)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.vertical, 10)
+            }
     }
 }
 
