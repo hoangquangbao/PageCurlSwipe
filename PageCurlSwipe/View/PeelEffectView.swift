@@ -16,6 +16,7 @@ struct PeelEffectView<Content: View>: View {
     
     /* View properties */
     @State private var dragProgress: CGFloat = 0
+    @State private var isExpanded: Bool = false
     
     init(@ViewBuilder content: @escaping () -> Content,
          onDelete: @escaping () -> Void) {
@@ -42,13 +43,16 @@ struct PeelEffectView<Content: View>: View {
                                     .padding(.trailing, 20)
                                     .foregroundColor(.white)
                             }
-                            .disabled(!(0.4...0.7).contains(dragProgress))
+                            .disabled(!isExpanded)
                         }
                         .padding(.vertical, 10)
                         .contentShape(Rectangle())
                         .gesture(
                             DragGesture()
                                 .onChanged({ value in
+                                    /* The Draggesture is still activate, disable it when card is peeled */
+                                    ///Disabling the Gesture when it's expanded
+                                    guard !isExpanded else { return }
                                     /* Right to Left Swipe: Negative value */
                                     var translationX = value.translation.width
                                     /* Limiting to Max: Zero */
@@ -58,6 +62,8 @@ struct PeelEffectView<Content: View>: View {
                                     dragProgress = progress
                                 })
                                 .onEnded({ value in
+                                    ///Disabling the Gesture when it's expanded
+                                    guard !isExpanded else { return }
                                     /* Smooth ending animation */
                                     withAnimation(.spring(response: 0.6,
                                                           dampingFraction: 0.7,
@@ -65,13 +71,21 @@ struct PeelEffectView<Content: View>: View {
                                         if dragProgress > 0.25 {
                                             /* Keep the drag gesture */
                                             dragProgress = CGFloat.random(in: 0.4...0.7)
+                                            isExpanded = true
                                         } else {
                                             dragProgress = .zero
+                                            isExpanded = false
                                         }
                                     }
                                 })
-                            /* The Draggesture is still activate, disable it when card is peeled*/
                         )
+                    /* If we tap other than Delete button, it will reset to init state */
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.7, blendDuration: 0.7)) {
+                                dragProgress = .zero
+                                isExpanded = false
+                            }
+                        }
                     
                     /* Background shadow */
                     Rectangle()
