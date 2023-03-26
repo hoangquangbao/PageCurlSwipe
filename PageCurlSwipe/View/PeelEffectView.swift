@@ -114,7 +114,7 @@ struct PeelEffectView<Content: View>: View {
                                                           blendDuration: 0.7)) {
                                         if dragProgress > 0.25 {
                                             /* Keep the drag gesture */
-                                            dragProgress = 0.6
+                                            dragProgress = CGFloat.random(in: 0.4...0.7)
                                         } else {
                                             dragProgress = .zero
                                         }
@@ -139,7 +139,7 @@ struct PeelEffectView<Content: View>: View {
                                 x: 30,
                                 y: 0)
                     /* To make the shadow visible, move the rectangle along with the gesture progress. */
-                    // Moving along side along dragging
+                    // Moving along side while dragging
                         .padding(.trailing, rect.width * dragProgress)
                 }
                 .mask(content)
