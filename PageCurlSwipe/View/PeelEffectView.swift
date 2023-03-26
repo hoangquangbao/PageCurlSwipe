@@ -30,13 +30,22 @@ struct PeelEffectView<Content: View>: View {
             .overlay(content: {
                 GeometryReader {
                     let rect = $0.frame(in: .global)
+                    let minX = rect.minX
                     
                     /* Background view */
                     RoundedRectangle(cornerRadius: 15, style: .continuous)
                         .fill(.red.gradient)
                         .overlay(alignment: .trailing) {
                             Button {
-                                print("Tapping..")
+                                ///Removing Card completely
+                                withAnimation(.spring(response: 0.6,
+                                                      dampingFraction: 0.7,
+                                                      blendDuration: 0.7)) {
+                                    dragProgress = 1
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    onDelete()
+                                }
                             } label: {
                                 Image(systemName: "trash")
                                     .font(.title)
@@ -104,6 +113,7 @@ struct PeelEffectView<Content: View>: View {
                         .mask(content)
                     /// Disable Interaction
                         .allowsHitTesting(false)
+                        .offset(x: dragProgress == 1 ? -minX : 0)
                     
                     content
                         .mask {
@@ -118,12 +128,14 @@ struct PeelEffectView<Content: View>: View {
                         }
                     /* Disable Interaction */
                         .allowsHitTesting(false)
+                        .offset(x: dragProgress == 1 ? -minX : 0)
                 }
             })
         
             .overlay {
                 GeometryReader {
                     let size = $0.size
+                    let minX = $0.frame(in: .global).minX
                     let minOpacity = dragProgress / 0.05
                     let opacity = min(1, minOpacity)
                     
@@ -174,6 +186,7 @@ struct PeelEffectView<Content: View>: View {
                             Rectangle()
                                 .offset(x: size.width * -dragProgress)
                         })
+                        .offset(x: dragProgress == 1 ? -minX : 0)
                 }
                 /* Disable Interaction */
                 .allowsHitTesting(false)
