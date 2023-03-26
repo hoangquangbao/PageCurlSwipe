@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/***
+/*
  The Scrollview uses this model to show a list of the photos that are available in the Assets.
  */
 struct ImageModel: Identifiable {

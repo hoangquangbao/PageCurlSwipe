@@ -20,7 +20,8 @@ struct CardView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 10,
+                                                style: .continuous))
             }
         }
         .frame(height: 130)
